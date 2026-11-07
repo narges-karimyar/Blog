@@ -55,7 +55,7 @@ export default function Aside() {
       <div className="mb-9 text-center">
         <BookOpen className="mx-auto mb-3 h-12 w-12 text-blue-400" />
 
-        <h1 className="text-2xl font-bold">Narges Blog</h1>
+        <h1 className="text-2xl font-bold">PULSE</h1>
 
         <p className="mt-1 text-sm text-gray-400">Read • Learn • Grow</p>
       </div>
@@ -127,34 +127,10 @@ export default function Aside() {
       <div className="my-6 border-t border-white/10" />
 
       {/* Popular Posts */}
-      <div>
-        <h3 className="mb-4 flex items-center gap-2 font-semibold">
-          <Flame size={20} className="text-orange-400" />
-          Popular Posts
-        </h3>
-
-        <div className="space-y-4">
-          {popularPosts.map((post, index) => (
-            <div key={index} className="flex items-center gap-3">
-              <img
-                src={post.image}
-                alt={post.title}
-                className="h-14 w-16 rounded-lg object-cover"
-              />
-
-              <div className="min-w-0">
-                <p className="text-sm font-medium leading-5">{post.title}</p>
-
-                <p className="mt-1 text-xs text-gray-400">{post.date}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Footer */}
       <div className="mt-auto pt-8 text-center text-xs text-gray-400">
-        © 2026 Narges Blog ♡
+        © 2026 PULSE
       </div>
     </aside>
   );

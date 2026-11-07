@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Pencil, Trash2, X, Save, Plus } from "lucide-react";
 
-const API = "http://localhost:5000/api/blogs";
+const API = "http://localhost:5000";
 
 export default function ManageBlogs() {
   const [blogs, setBlogs] = useState([]);

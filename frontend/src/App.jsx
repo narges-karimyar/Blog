@@ -5,6 +5,7 @@ import AllBlogs from "./Components/Blogs";
 import Home from "./Components/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ManageBlogs from "./Components/Managebelog";
+import Navigation from "./Components/Nav";
 
 function App() {
   return (

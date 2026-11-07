@@ -1,4 +1,5 @@
 import { Search, ArrowRight, Clock, User } from "lucide-react";
+import Navigation from "../Components/Nav";
 
 export default function Home() {
   const blogs = [
@@ -35,11 +36,12 @@ export default function Home() {
   ];
 
   return (
-    <main className="ml-[270px] min-h-screen bg-[#090D18] p-8 text-white">
+    <main className="ml-[270px] min-h-screen bg-[#090D18] p-8 text-white ">
+      <Navigation />
       {/* Top heading */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex items-center justify-between" mb-7>
         <div>
-          <p className="text-sm text-blue-400">WELCOME BACK</p>
+          <p className="text-sm text-blue-400 mt-10">WELCOME BACK</p>
           <h1 className="mt-2 text-3xl font-bold">
             Explore the World of Ideas
           </h1>
@@ -47,14 +49,10 @@ export default function Home() {
             Stories, knowledge and inspiration in one place.
           </p>
         </div>
-
-        <button className="rounded-xl bg-white/10 p-3 hover:bg-white/20">
-          <Search size={22} />
-        </button>
       </div>
 
       {/* Hero section */}
-      <section className="relative mb-12 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-800 p-10">
+      <section className="relative mb-12 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r  mt-10 from-blue-700 via-indigo-700 to-purple-800 p-10">
         <div className="relative z-10 max-w-xl">
           <span className="rounded-full bg-white/20 px-4 py-2 text-sm">
             ✨ Discover something new
