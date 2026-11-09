@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Send, Loader2, ImagePlus, X } from "lucide-react";
 
-const API_URL = "https://blog-bebv.vercel.app/api/blogs";
+const API_URL = "https://blog-prai.vercel.app/api/blogs";
 
 export default function AddBlog() {
   const navigate = useNavigate();

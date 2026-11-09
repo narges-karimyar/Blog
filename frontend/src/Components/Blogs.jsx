@@ -10,7 +10,7 @@ export default function AllBlogs() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("https://blog-bebv.vercel.app/api/blogs");
+        const response = await fetch("https://blog-prai.vercel.app/api/blogs");
 
         if (!response.ok) {
           throw new Error("Failed to fetch blogs");

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Pencil, Trash2, X, Save, Plus } from "lucide-react";
 
-const response = await fetch("https://blog-bebv.vercel.app/api/blogs");
+const response = await fetch("https://blog-prai.vercel.app/api/blogs");
 
 export default function ManageBlogs() {
   const [blogs, setBlogs] = useState([]);
