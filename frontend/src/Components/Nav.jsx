@@ -1,91 +1,109 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Search, Bell, ChevronDown, BookOpen } from "lucide-react";
 
-const Navigation = () => {
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "All Blogs", path: "/blogs" },
-    { name: "Add Blog", path: "/add-blog" },
-    { name: "Manage Blogs", path: "/manage-blogs" },
+import {
+  Home,
+  BookOpen,
+  PlusCircle,
+  LayoutDashboard,
+  Search,
+  Menu,
+  X,
+  Bell,
+} from "lucide-react";
+
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+
+  const links = [
+    { name: "Home", icon: Home, path: "/" },
+    { name: "All Blogs", icon: BookOpen, path: "/blogs" },
+    { name: "Add Blog", icon: PlusCircle, path: "/add-blog" },
+    { name: "Manage Blogs", icon: LayoutDashboard, path: "/manage-blogs" },
   ];
 
   return (
-    <nav
-      className="w-full h-[90px] px-8 flex items-center justify-between 
-      bg-[#0B1022]/90 backdrop-blur-xl border border-white/10 
-      rounded-[24px] shadow-lg"
-    >
-      {/* Navigation Links */}
-      <div className="flex items-center gap-10">
-        {navLinks.map((link) => (
-          <NavLink
-            key={link.name}
-            to={link.path}
-            end={link.path === "/"}
-            className={({ isActive }) =>
-              `relative py-3 text-[17px] font-medium transition-all duration-300
-              ${isActive ? "text-[#38BDF8]" : "text-gray-300 hover:text-white"}`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                {link.name}
-                {isActive && (
-                  <span
-                    className="absolute bottom-0 left-0 w-full h-[3px]
-                    rounded-full bg-gradient-to-r from-blue-400 to-purple-500"
-                  />
-                )}
-              </>
-            )}
-          </NavLink>
-        ))}
-      </div>
+    <nav className="relative z-50 mb-8 w-full rounded-2xl border border-white/10 bg-[#0B1022]/95 px-4 py-4 text-white shadow-lg backdrop-blur-xl sm:px-6">
+      <div className="flex min-h-[55px] items-center justify-between gap-4">
+        {/* Logo */}
+        <NavLink to="/" className="flex items-center gap-2">
+          <BookOpen size={32} className="text-blue-400" />
+          <div>
+            <h1 className="text-xl font-bold tracking-wider">PULSE</h1>
+            <p className="text-[10px] text-gray-400">Read • Learn • Grow</p>
+          </div>
+        </NavLink>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-6">
-        {/* Search */}
-        <div
-          className="flex items-center gap-3 px-5 py-3 w-[230px]
-          rounded-full bg-white/[0.05] border border-white/10
-          focus-within:border-blue-500/60 transition-all"
-        >
-          <Search size={21} className="text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full bg-transparent outline-none text-white
-              placeholder:text-gray-400 text-sm"
-          />
+        {/* Desktop Navigation */}
+        <div className="hidden items-center gap-2 lg:flex">
+          {links.map((link) => {
+            const Icon = link.icon;
+
+            return (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                end={link.path === "/"}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 rounded-xl px-4 py-3 text-sm transition ${
+                    isActive
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                      : "text-gray-300 hover:bg-white/10"
+                  }`
+                }
+              >
+                <Icon size={18} />
+                {link.name}
+              </NavLink>
+            );
+          })}
         </div>
 
-        {/* Notification */}
-        <button className="relative text-gray-300 hover:text-white transition">
-          <Bell size={23} />
-          <span
-            className="absolute -top-1 -right-1 w-2.5 h-2.5
-            rounded-full bg-purple-500 border-2 border-[#0B1022]"
-          />
-        </button>
+        {/* Right Side */}
+        <div className="flex items-center gap-4">
+          <button className="relative text-gray-300 hover:text-white">
+            <Bell size={21} />
+            <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-purple-500" />
+          </button>
 
-        <div className="h-9 w-px bg-white/15" />
-
-        {/* Profile */}
-        <button
-          className="flex items-center gap-3 text-gray-300
-          hover:text-white transition"
-        >
-          <div
-            className="w-11 h-11 rounded-full flex items-center
-            justify-center bg-gradient-to-br from-blue-500 to-purple-600"
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="rounded-lg p-2 hover:bg-white/10 lg:hidden"
+            aria-label="Toggle navigation"
           >
-            <BookOpen size={21} className="text-white" />
-          </div>
-          <ChevronDown size={17} />
-        </button>
+            {open ? <X size={25} /> : <Menu size={25} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Navigation */}
+      {open && (
+        <div className="mt-5 grid grid-cols-2 gap-2 border-t border-white/10 pt-5 lg:hidden">
+          {links.map((link) => {
+            const Icon = link.icon;
+
+            return (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                end={link.path === "/"}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 rounded-xl px-3 py-3 text-sm transition ${
+                    isActive
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                      : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  }`
+                }
+              >
+                <Icon size={18} />
+                {link.name}
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
     </nav>
   );
-};
-
-export default Navigation;
+}

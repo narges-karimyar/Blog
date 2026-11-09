@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, User, Calendar } from "lucide-react";
+import Navbar from "./Nav";
 
 export default function AllBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -29,14 +30,15 @@ export default function AllBlogs() {
   }, []);
 
   return (
-    <main className="ml-[270px] min-h-screen bg-[#090D18] p-8 text-white">
+    <main className="min-h-screen w-full bg-[#090D18] p-4 text-white sm:p-6 lg:p-8">
+      <Navbar />
       {/* Heading */}
       <div className="mb-10">
         <p className="text-sm font-medium text-blue-400">DISCOVER STORIES</p>
 
-        <h1 className="mt-2 text-4xl font-bold">All Blogs</h1>
+        <h1 className="mt-2 text-3xl font-bold sm:text-4xl">All Blogs</h1>
 
-        <p className="mt-3 text-gray-400">
+        <p className="mt-3 text-sm text-gray-400 sm:text-base">
           Explore all the latest stories and ideas.
         </p>
       </div>
@@ -56,7 +58,7 @@ export default function AllBlogs() {
 
           <Link
             to="/add-blog"
-            className="mt-6 inline-block rounded-xl bg-blue-600 px-6 py-3 font-medium hover:bg-blue-700"
+            className="mt-6 inline-block rounded-xl bg-blue-600 px-6 py-3 font-medium transition hover:bg-blue-700"
           >
             Add Your First Blog
           </Link>
@@ -64,30 +66,38 @@ export default function AllBlogs() {
       )}
 
       {/* Blog Cards */}
-      {!loading && blogs.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {!loading && !error && blogs.length > 0 && (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 lg:gap-6">
           {blogs.map((blog) => (
             <article
               key={blog._id}
-              className="overflow-hidden rounded-2xl border border-white/10 bg-[#131B2D] transition duration-300 hover:-translate-y-2 hover:border-blue-500/50"
+              className="group overflow-hidden rounded-2xl border border-white/10 bg-[#131B2D] transition duration-300 hover:-translate-y-2 hover:border-blue-500/50"
             >
-              <img
-                src={
-                  blog.image ||
-                  "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800"
-                }
-                alt={blog.title}
-                className="h-48 w-full object-cover"
-              />
+              {/* Image */}
+              <div className="h-48 overflow-hidden sm:h-52">
+                <img
+                  src={
+                    blog.image ||
+                    "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800"
+                  }
+                  alt={blog.title}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                />
+              </div>
 
+              {/* Content */}
               <div className="p-5">
-                <h2 className="text-xl font-bold">{blog.title}</h2>
+                <h2 className="text-xl font-bold transition group-hover:text-blue-400">
+                  {blog.title}
+                </h2>
 
                 <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-400">
                   {blog.description}
                 </p>
 
-                <div className="mt-5 flex flex-wrap gap-4 text-xs text-gray-400">
+                {/* Blog Information */}
+                <div className="mt-5 flex flex-wrap items-center gap-4 border-t border-white/10 pt-4 text-xs text-gray-400">
                   <span className="flex items-center gap-2">
                     <User size={15} />
                     {blog.author}
@@ -95,15 +105,19 @@ export default function AllBlogs() {
 
                   <span className="flex items-center gap-2">
                     <Calendar size={15} />
-                    {new Date(blog.createdAt).toLocaleDateString()}
+                    {blog.createdAt
+                      ? new Date(blog.createdAt).toLocaleDateString()
+                      : "No date"}
                   </span>
                 </div>
 
+                {/* Read More */}
                 <Link
                   to={`/blogs/${blog._id}`}
-                  className="mt-6 flex items-center gap-2 font-semibold text-blue-400 hover:text-purple-400"
+                  className="mt-6 inline-flex items-center gap-2 font-semibold text-blue-400 transition hover:text-purple-400"
                 >
-                  Read More <ArrowRight size={17} />
+                  Read More
+                  <ArrowRight size={17} />
                 </Link>
               </div>
             </article>
