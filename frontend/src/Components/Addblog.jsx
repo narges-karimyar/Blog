@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Loader2, ImagePlus, X } from "lucide-react";
+
+const API_URL = "https://blog-bebv.vercel.app/api/blogs";
 
 export default function AddBlog() {
   const navigate = useNavigate();
@@ -10,59 +12,108 @@ export default function AddBlog() {
     description: "",
     content: "",
     author: "",
-    image: "",
   });
 
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  function handleImageChange(e) {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setMessage("Please select an image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage("Image must be smaller than 5MB.");
+      return;
+    }
+
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+    setMessage("");
+  }
+
+  function removeImage() {
+    setImage(null);
+    setPreview("");
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage("");
 
+    if (loading) return;
+
+    setLoading(true);
+
     try {
-      const response = await fetch("https://blog-bebv.vercel.app/api/blogs", {
+      const body = new FormData();
+
+      Object.entries(formData).forEach(([key, value]) => {
+        body.append(key, value);
+      });
+
+      if (image) {
+        body.append("image", image);
+      }
+
+      const response = await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body,
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Could not add blog.");
+        throw new Error(
+          data.message || data.error || "Failed to publish blog.",
+        );
       }
 
-      alert("Blog added successfully!");
+      alert("Blog published successfully!");
+
       navigate("/blogs");
     } catch (error) {
+      console.error("Publishing error:", error);
       setMessage(error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
   const inputClass =
-    "w-full rounded-xl border border-white/10 bg-[#151C2E] px-4 py-3 text-white outline-none focus:border-blue-500";
+    "w-full rounded-xl border border-white/10 bg-[#151C2E] px-4 py-3 text-white outline-none transition focus:border-blue-500";
 
   return (
-    <main className="ml-[270px] min-h-screen p-8 text-white">
+    <main className="ml-[270px] min-h-screen bg-[#090D18] p-8 text-white">
       <button
+        type="button"
         onClick={() => navigate("/blogs")}
         className="mb-8 flex items-center gap-2 text-gray-400 hover:text-white"
       >
-        <ArrowLeft size={18} /> Back to blogs
+        <ArrowLeft size={18} />
+        Back to blogs
       </button>
 
       <div className="mx-auto max-w-3xl">
         <h1 className="text-3xl font-bold">Create a New Blog</h1>
-        <p className="mt-2 mb-8 text-gray-400">
+
+        <p className="mb-8 mt-2 text-gray-400">
           Share your ideas and stories with the world.
         </p>
 
@@ -74,6 +125,7 @@ export default function AddBlog() {
             <label className="mb-2 block text-sm text-gray-300">
               Blog Title
             </label>
+
             <input
               className={inputClass}
               name="title"
@@ -88,13 +140,14 @@ export default function AddBlog() {
             <label className="mb-2 block text-sm text-gray-300">
               Short Description
             </label>
+
             <textarea
               className={inputClass}
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Write a short description"
-              rows="3"
+              rows={3}
               required
             />
           </div>
@@ -103,19 +156,21 @@ export default function AddBlog() {
             <label className="mb-2 block text-sm text-gray-300">
               Blog Content
             </label>
+
             <textarea
               className={inputClass}
               name="content"
               value={formData.content}
               onChange={handleChange}
               placeholder="Write your blog..."
-              rows="8"
+              rows={8}
               required
             />
           </div>
 
           <div>
             <label className="mb-2 block text-sm text-gray-300">Author</label>
+
             <input
               className={inputClass}
               name="author"
@@ -126,26 +181,71 @@ export default function AddBlog() {
             />
           </div>
 
+          {/* Image Upload */}
+
           <div>
-            <label className="mb-2 block text-sm text-gray-300">
-              Image URL
+            <label className="mb-3 block text-sm text-gray-300">
+              Blog Cover Image
             </label>
-            <input
-              className={inputClass}
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="Paste an image URL"
-            />
+
+            {preview ? (
+              <div className="relative overflow-hidden rounded-xl border border-white/10">
+                <img
+                  src={preview}
+                  alt="Blog preview"
+                  className="h-64 w-full object-cover"
+                />
+
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute right-3 top-3 rounded-full bg-red-600 p-2 text-white"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ) : (
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-[#151C2E] p-10 transition hover:border-blue-500">
+                <ImagePlus size={36} className="mb-3 text-blue-400" />
+
+                <span className="font-medium">Click to upload an image</span>
+
+                <span className="mt-2 text-sm text-gray-500">
+                  PNG, JPG or WEBP (Maximum 5MB)
+                </span>
+
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
 
-          {message && <p className="text-sm text-red-400">{message}</p>}
+          {message && (
+            <p className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
+              {message}
+            </p>
+          )}
 
           <button
             type="submit"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold hover:bg-blue-500"
+            disabled={loading}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold transition hover:bg-blue-500 disabled:opacity-50"
           >
-            <Send size={18} /> Publish Blog
+            {loading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                Publishing...
+              </>
+            ) : (
+              <>
+                <Send size={18} />
+                Publish Blog
+              </>
+            )}
           </button>
         </form>
       </div>
